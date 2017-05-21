@@ -63,9 +63,11 @@ full_address = gets.chomp
 if full_address.include? "/"
   ip, mask = full_address.split("/")
   subnet = mask_to_subnet(mask.to_i)
-else
+elsif full_address.include? " "
   ip, mask = full_address.split
   subnet = mask.split(".").map { |s| s.to_i }
+else
+  invalid("format, exiting.")
 end
 ip = ip.split(".").map { |s| s.to_i }
 
