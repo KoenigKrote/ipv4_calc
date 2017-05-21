@@ -22,9 +22,9 @@ end
 
 #Validates the IP is properly written
 def validate_ip(ip)
-  invalid("IP") if ip[0] == 0 || ip.length != 4
+  invalid("IP") if ip[0] <= 0 || ip.length != 4 
   ip.each do |x|
-    invalid("IP") if x < 0 || x > 255
+    invalid("IP") if x < 0 || x >= 255
   end
 end
 
@@ -45,6 +45,7 @@ def get_network_broadcast(ip, subnet)
       broadcast[i] = network[i] = ip[i]
     else
       temp_broadcast = 255 - subnet[i]
+      invalid("IP: Same as broadcast address.") if i == 3 && ip[i] == temp_broadcast
       broadcast[i] = ((temp_broadcast+1)*(1+(ip[i]/temp_broadcast)))-1
       network[i] = broadcast[i]-temp_broadcast
     end
@@ -74,6 +75,9 @@ ip = ip.split(".").map { |s| s.to_i }
 validate_ip(ip)
 validate_subnet(subnet)
 network_address, broadcast_address = get_network_broadcast(ip, subnet)
+
+invalid("IP: Same as network address.") if ip == network_address
+invalid("IP: Same as broadcast address.") if ip == broadcast_address
 
 first_host = network_address.dup
 first_host[3] += 1
